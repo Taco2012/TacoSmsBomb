@@ -12,8 +12,8 @@ Nasıl Çalışır?
 
 1-git clone https://github.com/Taco2012/TacoSmsBomb.git
 
-2-cd CodzaSmsBomber
+2-cd TacoSmsBomber
 
-3-python3 CodzaSms.py
+3-python3 TacoSms.py
 
 Not=Bu kodlar Enough-Reborn ve CodzaSmsBomber kodları tarafından düzenlenerek yapılmıştır.
