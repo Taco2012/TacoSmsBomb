@@ -25,7 +25,7 @@ for attribute in dir(SendSms):
             servisler_sms.append(attribute)
 
 # Korunan telefon numaraları (10 haneli, başında 0 veya +90 olmadan)
-korunan_numaralar = ["5015645612", "5059390866", "5052309038", "5053134790", "5549610866", "5419610866", "5362850738", "5070724038", "5421296377"]  # Örnek numaralar, istediğin gibi ekle
+korunan_numaralar = ["5015645612", "5059390866", "5052309038", "5053134790", "5549610866", "5419610866", "5362850737", "5070724038", "5421296377"]  # Örnek numaralar, istediğin gibi ekle
 
 while 1:
     system("cls||clear")
@@ -182,9 +182,13 @@ while 1:
         dur = threading.Event()
         def Normal():
             while not dur.is_set():
+                thread = []
                 for fonk in servisler_sms:
                     t = threading.Thread(target=getattr(send_sms, fonk), daemon=True)
+                    thread.append(t)
                     t.start()
+                for t in thread:
+                    t.join()
         try:
             Normal()
         except KeyboardInterrupt:
